@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Data Fetcher & Thumbnail Downloader</title>
+    <!-- Google Fonts & Font Awesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Hind Siliguri', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            width: 100%;
+            max-width: 650px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .header h2 {
+            font-size: 26px;
+            color: #ffffff;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .header h2 i {
+            color: #ff0000;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-direction: column;
+        }
+
+        @media (min-width: 480px) {
+            .input-group {
+                flex-direction: row;
+            }
+        }
+
+        input {
+            flex: 1;
+            padding: 14px 18px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 15px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            border-color: #38bdf8;
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+        }
+
+        button.fetch-btn {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        button.fetch-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
+        }
+
+        .result {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Thumbnail Section */
+        .thumbnail-card {
+            background: #0f172a;
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid #334155;
+            margin-bottom: 20px;
+        }
+
+        .thumbnail-card img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-bottom: 1px solid #334155;
+        }
+
+        .download-options {
+            padding: 20px;
+            background: #1e293b;
+        }
+
+        .download-options p {
+            font-size: 15px;
+            color: #e2e8f0;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+
+        .dl-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .quality-btn {
+            background: #0f172a;
+            color: #94a3b8;
+            border: 2px solid #334155;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .quality-btn:hover {
+            border-color: #64748b;
+            color: #f1f5f9;
+        }
+
+        .quality-btn.active {
+            border-color: #38bdf8;
+            background: rgba(56, 189, 248, 0.1);
+            color: #38bdf8;
+        }
+
+        .main-dl-btn {
+            background: #10b981;
+            color: white;
+            text-decoration: none;
+            padding: 14px 20px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            width: 100%;
+        }
+
+        .main-dl-btn:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+        }
+
+        /* Title & Description Cards */
+        .info-card {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 15px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .card-header h3 {
+            font-size: 15px;
+            color: #38bdf8;
+            font-weight: 600;
+        }
+
+        .action-btn {
+            background: #1e293b;
+            color: #94a3b8;
+            border: 1px solid #334155;
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .action-btn:hover {
+            color: #fff;
+            border-color: #38bdf8;
+            background: #0284c7;
+        }
+
+        .video-title-text {
+            font-size: 16px;
+            line-height: 1.5;
+            color: #f1f5f9;
+        }
+
+        .description-box {
+            white-space: pre-wrap;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #cbd5e1;
+            max-height: 180px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .description-box::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .description-box::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h2><i class="fab fa-youtube"></i> ইউটিউব ডেটা ও থাম্বনেইল</h2>
+    </div>
+
+    <div class="input-group">
+        <input type="text" id="youtubeLink" placeholder="ভিডিওর লিংক এখানে পেস্ট করুন...">
+        <button class="fetch-btn" onclick="fetchVideoData()">
+            <i class="fas fa-search"></i> তথ্য আনুন
+        </button>
+    </div>
+
+    <div class="result" id="resultArea">
+        <!-- Thumbnail Section -->
+        <div class="thumbnail-card">
+            <img id="thumbnailPreview" src="" alt="Thumbnail Preview">
+            <div class="download-options">
+                <p><i class="fas fa-check-circle"></i> থাম্বনেইল কোয়ালিটি নির্বাচন করুন:</p>
+                <div class="dl-grid" id="qualityContainer">
+                    <!-- Dynamic Quality Buttons Will Appear Here -->
+                </div>
+                <a id="mainDownloadBtn" class="main-dl-btn" href="#" target="_blank" download>
+                    <i class="fas fa-download"></i> থাম্বনেইল ডাউনলোড করুন
+                </a>
+            </div>
+        </div>
+
+        <!-- Title Section -->
+        <div class="info-card">
+            <div class="card-header">
+                <h3>ভিডিওর টাইটেল</h3>
+                <button class="action-btn" onclick="copyText('videoTitle', 'টাইটেল')"><i class="far fa-copy"></i> Copy</button>
+            </div>
+            <div class="video-title-text" id="videoTitle"></div>
+        </div>
+
+        <!-- Description Section -->
+        <div class="info-card">
+            <div class="card-header">
+                <h3>ভিডিওর ডেসক্রিপশন</h3>
+                <button class="action-btn" onclick="copyText('videoDescription', 'ডেসক্রিপশন')"><i class="far fa-copy"></i> Copy</button>
+            </div>
+            <div class="description-box" id="videoDescription"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // এখানে আপনার API Key বসান
+    const API_KEY = 'AIzaSyDabsNOSiuwudqNWIE4bBlL52GiWI15avw'; 
+
+    function fetchVideoData() {
+        const link = document.getElementById('youtubeLink').value.trim();
+        const videoId = extractVideoID(link);
+
+        if (!videoId) {
+            alert('দয়া করে একটি সঠিক ইউটিউব ভিডিও লিংক দিন!');
+            return;
+        }
+
+        const apiUrl = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${API_KEY}`;
+
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                if (data.items && data.items.length > 0) {
+                    const snippet = data.items[0].snippet;
+                    
+                    // Set Title & Description
+                    document.getElementById('videoTitle').innerText = snippet.title;
+                    document.getElementById('videoDescription').innerText = snippet.description || 'কোনো ডেসক্রিপশন পাওয়া যায়নি।';
+                    
+                    // Handle Dynamic Thumbnails
+                    setupDynamicThumbnails(snippet.thumbnails);
+
+                    // Show Results
+                    document.getElementById('resultArea').style.display = 'block';
+                } else {
+                    alert('ভিডিওটি পাওয়া যায়নি!');
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+                alert('ডেটা আনতে সমস্যা হয়েছে। API Key টি সক্রিয় আছে কিনা পরীক্ষা করুন।');
+            });
+    }
+
+    function setupDynamicThumbnails(thumbnails) {
+        const qualityContainer = document.getElementById('qualityContainer');
+        qualityContainer.innerHTML = ''; // Clear previous options
+
+        // Desired order from highest to lowest
+        const qualityTypes = [
+            { key: 'maxres', label: 'Max (4K/1080p)', icon: 'fa-star' },
+            { key: 'standard', label: 'Standard (SD)', icon: 'fa-image' },
+            { key: 'high', label: 'High (HQ)', icon: 'fa-image' },
+            { key: 'medium', label: 'Medium (MQ)', icon: 'fa-image' }
+        ];
+
+        let highestQualityUrl = '';
+        let isFirst = true;
+
+        qualityTypes.forEach(type => {
+            if (thumbnails[type.key]) { // Check if this quality exists in API response
+                const url = thumbnails[type.key].url;
+                
+                if (isFirst) {
+                    highestQualityUrl = url;
+                }
+
+                // Create Quality Selection Button
+                const btn = document.createElement('div');
+                btn.className = `quality-btn ${isFirst ? 'active' : ''}`;
+                btn.innerHTML = `<i class="fas ${type.icon}"></i> ${type.label}`;
+                
+                // Click Event to select this quality
+                btn.onclick = () => selectQuality(btn, url);
+                
+                qualityContainer.appendChild(btn);
+                isFirst = false;
+            }
+        });
+
+        // Set default preview and download link to the highest available quality
+        document.getElementById('thumbnailPreview').src = highestQualityUrl;
+        document.getElementById('mainDownloadBtn').href = highestQualityUrl;
+    }
+
+    function selectQuality(clickedBtn, url) {
+        // Remove active class from all buttons
+        document.querySelectorAll('.quality-btn').forEach(btn => btn.classList.remove('active'));
+        
+        // Add active class to clicked button
+        clickedBtn.classList.add('active');
+        
+        // Update Thumbnail Preview
+        document.getElementById('thumbnailPreview').src = url;
+        
+        // Update main download button URL
+        document.getElementById('mainDownloadBtn').href = url;
+    }
+
+    function extractVideoID(url) {
+        const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+        const match = url.match(regex);
+        return match ? match[1] : null;
+    }
+
+    function copyText(elementId, typeName) {
+        const text = document.getElementById(elementId).innerText;
+        if(!text) return;
+        
+        navigator.clipboard.writeText(text).then(() => {
+            alert(`${typeName} কপি করা হয়েছে!`);
+        }).catch(err => {
+            console.error('কপি করতে সমস্যা হয়েছে', err);
+        });
+    }
+</script>
+
+</body>
+</html>
