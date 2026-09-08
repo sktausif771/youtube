@@ -185,7 +185,7 @@
         .main-dl-btn {
             background: #10b981;
             color: white;
-            text-decoration: none;
+            border: none;
             padding: 14px 20px;
             border-radius: 10px;
             font-size: 16px;
@@ -197,6 +197,7 @@
             transition: all 0.3s ease;
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
             width: 100%;
+            cursor: pointer;
         }
 
         .main-dl-btn:hover {
@@ -293,12 +294,11 @@
             <img id="thumbnailPreview" src="" alt="Thumbnail Preview">
             <div class="download-options">
                 <p><i class="fas fa-check-circle"></i> থাম্বনেইল কোয়ালিটি নির্বাচন করুন:</p>
-                <div class="dl-grid" id="qualityContainer">
-                    <!-- Dynamic Quality Buttons Will Appear Here -->
-                </div>
-                <a id="mainDownloadBtn" class="main-dl-btn" href="#" target="_blank" download>
+                <div class="dl-grid" id="qualityContainer"></div>
+                
+                <button id="mainDownloadBtn" class="main-dl-btn" onclick="downloadImage()">
                     <i class="fas fa-download"></i> থাম্বনেইল ডাউনলোড করুন
-                </a>
+                </button>
             </div>
         </div>
 
@@ -323,8 +323,8 @@
 </div>
 
 <script>
-    // এখানে আপনার API Key বসান
     const API_KEY = 'AIzaSyDabsNOSiuwudqNWIE4bBlL52GiWI15avw'; 
+    let selectedImageUrl = '';
 
     function fetchVideoData() {
         const link = document.getElementById('youtubeLink').value.trim();
@@ -343,14 +343,10 @@
                 if (data.items && data.items.length > 0) {
                     const snippet = data.items[0].snippet;
                     
-                    // Set Title & Description
                     document.getElementById('videoTitle').innerText = snippet.title;
                     document.getElementById('videoDescription').innerText = snippet.description || 'কোনো ডেসক্রিপশন পাওয়া যায়নি।';
                     
-                    // Handle Dynamic Thumbnails
                     setupDynamicThumbnails(snippet.thumbnails);
-
-                    // Show Results
                     document.getElementById('resultArea').style.display = 'block';
                 } else {
                     alert('ভিডিওটি পাওয়া যায়নি!');
@@ -364,9 +360,8 @@
 
     function setupDynamicThumbnails(thumbnails) {
         const qualityContainer = document.getElementById('qualityContainer');
-        qualityContainer.innerHTML = ''; // Clear previous options
+        qualityContainer.innerHTML = '';
 
-        // Desired order from highest to lowest
         const qualityTypes = [
             { key: 'maxres', label: 'Max (4K/1080p)', icon: 'fa-star' },
             { key: 'standard', label: 'Standard (SD)', icon: 'fa-image' },
@@ -374,23 +369,20 @@
             { key: 'medium', label: 'Medium (MQ)', icon: 'fa-image' }
         ];
 
-        let highestQualityUrl = '';
         let isFirst = true;
 
         qualityTypes.forEach(type => {
-            if (thumbnails[type.key]) { // Check if this quality exists in API response
+            if (thumbnails[type.key]) {
                 const url = thumbnails[type.key].url;
                 
                 if (isFirst) {
-                    highestQualityUrl = url;
+                    selectedImageUrl = url;
                 }
 
-                // Create Quality Selection Button
                 const btn = document.createElement('div');
                 btn.className = `quality-btn ${isFirst ? 'active' : ''}`;
                 btn.innerHTML = `<i class="fas ${type.icon}"></i> ${type.label}`;
                 
-                // Click Event to select this quality
                 btn.onclick = () => selectQuality(btn, url);
                 
                 qualityContainer.appendChild(btn);
@@ -398,23 +390,46 @@
             }
         });
 
-        // Set default preview and download link to the highest available quality
-        document.getElementById('thumbnailPreview').src = highestQualityUrl;
-        document.getElementById('mainDownloadBtn').href = highestQualityUrl;
+        document.getElementById('thumbnailPreview').src = selectedImageUrl;
     }
 
     function selectQuality(clickedBtn, url) {
-        // Remove active class from all buttons
         document.querySelectorAll('.quality-btn').forEach(btn => btn.classList.remove('active'));
-        
-        // Add active class to clicked button
         clickedBtn.classList.add('active');
         
-        // Update Thumbnail Preview
+        selectedImageUrl = url;
         document.getElementById('thumbnailPreview').src = url;
-        
-        // Update main download button URL
-        document.getElementById('mainDownloadBtn').href = url;
+    }
+
+    // Blob দিয়ে মেমোরিতে ছবি ডিকোড করে সরাসরি ডাউনলোড করার ফাংশন
+    async function downloadImage() {
+        if (!selectedImageUrl) return;
+
+        const btn = document.getElementById('mainDownloadBtn');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ডাউনলোড হচ্ছে...`;
+
+        try {
+            const response = await fetch(selectedImageUrl);
+            const blob = await response.blob();
+            const blobUrl = window.URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = blobUrl;
+            a.download = `youtube-thumbnail-${Date.now()}.jpg`;
+            
+            document.body.appendChild(a);
+            a.click();
+            
+            window.URL.revokeObjectURL(blobUrl);
+            document.body.removeChild(a);
+        } catch (error) {
+            // অ্যান্ড্রয়েড অ্যাপ বা ব্রাউজারের সিকিউরিটি ব্লক করলে সরাসরি নিউ ট্যাবে ওপেন হবে
+            window.open(selectedImageUrl, '_blank');
+        } finally {
+            btn.innerHTML = originalText;
+        }
     }
 
     function extractVideoID(url) {
