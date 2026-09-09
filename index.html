@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube Data Fetcher & Thumbnail Downloader</title>
+    <title>YouTube Data Fetcher Pro</title>
     <!-- Google Fonts & Font Awesome Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
@@ -13,7 +13,7 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Hind Siliguri', sans-serif;
+            font-family: 'Poppins', sans-serif;
         }
 
         body {
@@ -27,9 +27,8 @@
         }
 
         .container {
-            background: rgba(30, 41, 59, 0.7);
+            background: rgba(30, 41, 59, 0.8);
             backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 20px;
             padding: 30px;
@@ -84,7 +83,6 @@
 
         input:focus {
             border-color: #38bdf8;
-            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
         }
 
         button.fetch-btn {
@@ -96,22 +94,15 @@
             cursor: pointer;
             font-weight: 600;
             font-size: 16px;
-            transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
         }
 
-        button.fetch-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
-        }
-
-        .result {
+        .view-section {
             display: none;
-            animation: fadeIn 0.5s ease-in-out;
+            animation: fadeIn 0.5s ease;
         }
 
         @keyframes fadeIn {
@@ -119,100 +110,38 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Thumbnail Section */
-        .thumbnail-card {
+        .card {
             background: #0f172a;
-            border-radius: 14px;
-            overflow: hidden;
             border: 1px solid #334155;
-            margin-bottom: 20px;
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 15px;
+            overflow: hidden;
         }
 
-        .thumbnail-card img {
+        .card img {
             width: 100%;
             height: auto;
+            border-radius: 10px;
             display: block;
-            border-bottom: 1px solid #334155;
-        }
-
-        .download-options {
-            padding: 20px;
-            background: #1e293b;
-        }
-
-        .download-options p {
-            font-size: 15px;
-            color: #e2e8f0;
-            margin-bottom: 12px;
-            font-weight: 500;
-        }
-
-        .dl-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .quality-btn {
-            background: #0f172a;
-            color: #94a3b8;
-            border: 2px solid #334155;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .quality-btn:hover {
-            border-color: #64748b;
-            color: #f1f5f9;
-        }
-
-        .quality-btn.active {
-            border-color: #38bdf8;
-            background: rgba(56, 189, 248, 0.1);
-            color: #38bdf8;
+            margin-bottom: 15px;
         }
 
         .main-dl-btn {
             background: #10b981;
             color: white;
             border: none;
-            padding: 14px 20px;
+            padding: 12px 20px;
             border-radius: 10px;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 600;
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 8px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
             width: 100%;
             cursor: pointer;
-        }
-
-        .main-dl-btn:hover {
-            background: #059669;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
-        }
-
-        /* Title & Description Cards */
-        .info-card {
-            background: #0f172a;
-            border: 1px solid #334155;
-            border-radius: 14px;
-            padding: 16px;
-            margin-bottom: 15px;
+            margin-top: 10px;
         }
 
         .card-header {
@@ -225,7 +154,6 @@
         .card-header h3 {
             font-size: 15px;
             color: #38bdf8;
-            font-weight: 600;
         }
 
         .action-btn {
@@ -236,41 +164,87 @@
             font-size: 12px;
             border-radius: 6px;
             cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 5px;
         }
 
-        .action-btn:hover {
-            color: #fff;
-            border-color: #38bdf8;
-            background: #0284c7;
-        }
-
-        .video-title-text {
-            font-size: 16px;
-            line-height: 1.5;
-            color: #f1f5f9;
-        }
-
-        .description-box {
+        .text-box {
             white-space: pre-wrap;
             font-size: 14px;
             line-height: 1.6;
             color: #cbd5e1;
             max-height: 180px;
             overflow-y: auto;
-            padding-right: 5px;
         }
 
-        .description-box::-webkit-scrollbar {
-            width: 6px;
+        /* Video Specific Styles */
+        .video-channel-name {
+            font-size: 18px;
+            color: #fff;
+            margin-bottom: 12px;
+            text-align: center;
+            font-weight: 600;
         }
-
-        .description-box::-webkit-scrollbar-thumb {
-            background: #334155;
+        
+        .video-stats-grid {
+            display: flex;
+            justify-content: space-between;
+            background: #1e293b;
+            padding: 12px;
             border-radius: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #334155;
+        }
+
+        .stat-item {
+            text-align: center;
+            flex: 1;
+        }
+
+        .stat-item:not(:last-child) {
+            border-right: 1px solid #334155;
+        }
+
+        .stat-item i {
+            color: #94a3b8;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .stat-item p {
+            color: #f1f5f9;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        /* Channel Specific Styles */
+        .channel-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .channel-header h3 { font-size: 22px; color: #fff; }
+        
+        .channel-meta {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 8px;
+        }
+
+        .channel-meta span {
+            color: #94a3b8;
+            font-size: 13px;
+            background: #1e293b;
+            padding: 4px 10px;
+            border-radius: 20px;
+            border: 1px solid #334155;
+        }
+        
+        .channel-logo {
+            width: 120px !important;
+            height: 120px !important;
+            border-radius: 50% !important;
+            margin: 0 auto 15px auto !important;
+            border: 3px solid #38bdf8;
         }
     </style>
 </head>
@@ -278,158 +252,189 @@
 
 <div class="container">
     <div class="header">
-        <h2><i class="fab fa-youtube"></i> ইউটিউব ডেটা ও থাম্বনেইল</h2>
+        <h2><i class="fab fa-youtube"></i> YouTube Data Fetcher</h2>
     </div>
 
     <div class="input-group">
-        <input type="text" id="youtubeLink" placeholder="ভিডিওর লিংক এখানে পেস্ট করুন...">
-        <button class="fetch-btn" onclick="fetchVideoData()">
-            <i class="fas fa-search"></i> তথ্য আনুন
+        <input type="text" id="youtubeLink" placeholder="Enter Video or Channel link...">
+        <button class="fetch-btn" onclick="analyzeLink()">
+            <i class="fas fa-search"></i> Fetch Data
         </button>
     </div>
 
-    <div class="result" id="resultArea">
-        <!-- Thumbnail Section -->
-        <div class="thumbnail-card">
-            <img id="thumbnailPreview" src="" alt="Thumbnail Preview">
-            <div class="download-options">
-                <p><i class="fas fa-check-circle"></i> থাম্বনেইল কোয়ালিটি নির্বাচন করুন:</p>
-                <div class="dl-grid" id="qualityContainer"></div>
-                
-                <button id="mainDownloadBtn" class="main-dl-btn" onclick="downloadImage()">
-                    <i class="fas fa-download"></i> থাম্বনেইল ডাউনলোড করুন
-                </button>
+    <!-- 1. Video View -->
+    <div id="videoView" class="view-section">
+        <h3 id="videoChannelName" class="video-channel-name">Channel Name</h3>
+        
+        <!-- Video Stats Grid -->
+        <div class="video-stats-grid">
+            <div class="stat-item">
+                <i class="fas fa-eye"></i>
+                <p id="videoViews">0</p>
+            </div>
+            <div class="stat-item">
+                <i class="fas fa-thumbs-up"></i>
+                <p id="videoLikes">0</p>
+            </div>
+            <div class="stat-item">
+                <i class="fas fa-comment"></i>
+                <p id="videoComments">0</p>
             </div>
         </div>
 
-        <!-- Title Section -->
-        <div class="info-card">
-            <div class="card-header">
-                <h3>ভিডিওর টাইটেল</h3>
-                <button class="action-btn" onclick="copyText('videoTitle', 'টাইটেল')"><i class="far fa-copy"></i> Copy</button>
-            </div>
-            <div class="video-title-text" id="videoTitle"></div>
+        <div class="card">
+            <img id="videoThumb" src="" alt="Thumbnail">
+            <button class="main-dl-btn" onclick="downloadImage(document.getElementById('videoThumb').src, 'Thumbnail')">
+                <i class="fas fa-download"></i> Download Max Quality
+            </button>
         </div>
-
-        <!-- Description Section -->
-        <div class="info-card">
+        <div class="card">
             <div class="card-header">
-                <h3>ভিডিওর ডেসক্রিপশন</h3>
-                <button class="action-btn" onclick="copyText('videoDescription', 'ডেসক্রিপশন')"><i class="far fa-copy"></i> Copy</button>
+                <h3>Video Title</h3>
+                <button class="action-btn" onclick="copyText('videoTitle', 'Title')"><i class="far fa-copy"></i> Copy</button>
             </div>
-            <div class="description-box" id="videoDescription"></div>
+            <div class="text-box" id="videoTitle"></div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3>Video Description</h3>
+                <button class="action-btn" onclick="copyText('videoDesc', 'Description')"><i class="far fa-copy"></i> Copy</button>
+            </div>
+            <div class="text-box" id="videoDesc"></div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3>Category</h3>
+                <button class="action-btn" onclick="copyText('videoCategory', 'Category')"><i class="far fa-copy"></i> Copy</button>
+            </div>
+            <div class="text-box" id="videoCategory"></div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3>Tags / Keywords</h3>
+                <button class="action-btn" onclick="copyText('videoTags', 'Tags')"><i class="far fa-copy"></i> Copy</button>
+            </div>
+            <div class="text-box" id="videoTags"></div>
+        </div>
+    </div>
+
+    <!-- 2. Channel View -->
+    <div id="channelView" class="view-section">
+        <div class="channel-header">
+            <h3 id="channelName">Channel Name</h3>
+            <div class="channel-meta">
+                <span><i class="fas fa-users"></i> <b id="channelSubs">0</b></span>
+                <span><i class="fas fa-video"></i> <b id="channelVideos">0</b> Videos</span>
+                <span><i class="fas fa-globe"></i> <b id="channelCountry">Unknown</b></span>
+            </div>
+        </div>
+        <div class="card" id="bannerCard">
+            <h3 style="color: #94a3b8; margin-bottom: 10px; font-size: 14px;">Channel Banner</h3>
+            <img id="channelBanner" src="" alt="Banner">
+            <button class="main-dl-btn" onclick="downloadImage(document.getElementById('channelBanner').src, 'Banner')">
+                <i class="fas fa-download"></i> Download Banner
+            </button>
+        </div>
+        <div class="card" style="text-align: center;">
+            <h3 style="color: #94a3b8; margin-bottom: 10px; font-size: 14px;">Profile Picture</h3>
+            <img id="channelLogo" class="channel-logo" src="" alt="Logo">
+            <button class="main-dl-btn" onclick="downloadImage(document.getElementById('channelLogo').src, 'Logo')">
+                <i class="fas fa-download"></i> Download Logo
+            </button>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3>Channel Description</h3>
+                <button class="action-btn" onclick="copyText('channelDesc', 'Description')"><i class="far fa-copy"></i> Copy</button>
+            </div>
+            <div class="text-box" id="channelDesc" style="margin-bottom: 10px;"></div>
+            <p style="color: #38bdf8; font-size: 14px; margin-top: 10px;"><b>Joined Date:</b> <span id="channelDate"></span></p>
         </div>
     </div>
 </div>
 
 <script>
     const API_KEY = 'AIzaSyDabsNOSiuwudqNWIE4bBlL52GiWI15avw'; 
-    let selectedImageUrl = '';
 
-    function fetchVideoData() {
+    // YouTube Category Map
+    const categoryMap = {
+        "1": "Film & Animation", "2": "Autos & Vehicles", "10": "Music", "15": "Pets & Animals",
+        "17": "Sports", "18": "Short Movies", "19": "Travel & Events", "20": "Gaming",
+        "21": "Videoblogging", "22": "People & Blogs", "23": "Comedy", "24": "Entertainment",
+        "25": "News & Politics", "26": "Howto & Style", "27": "Education", "28": "Science & Technology",
+        "29": "Nonprofits & Activism"
+    };
+
+    function hideAllViews() {
+        document.getElementById('videoView').style.display = 'none';
+        document.getElementById('channelView').style.display = 'none';
+    }
+
+    function analyzeLink() {
         const link = document.getElementById('youtubeLink').value.trim();
-        const videoId = extractVideoID(link);
+        hideAllViews();
 
-        if (!videoId) {
-            alert('দয়া করে একটি সঠিক ইউটিউব ভিডিও লিংক দিন!');
+        if (link === '') {
+            alert('Please enter a link first!');
             return;
         }
 
-        const apiUrl = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${API_KEY}`;
+        if (link.includes('/@') || link.includes('/channel/') || link.includes('/c/')) {
+            fetchChannelData(link);
+        } else {
+            const videoId = extractVideoID(link);
+            if (videoId) {
+                fetchVideoData(videoId);
+            } else {
+                alert('Please enter a valid YouTube Video or Channel link!');
+            }
+        }
+    }
 
+    // --- Video Functions ---
+    function fetchVideoData(videoId) {
+        // Requesting snippet AND statistics to get views, likes, comments
+        const apiUrl = `https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&id=${videoId}&key=${API_KEY}`;
+        
         fetch(apiUrl)
-            .then(response => response.json())
+            .then(res => res.json())
             .then(data => {
                 if (data.items && data.items.length > 0) {
                     const snippet = data.items[0].snippet;
-                    
+                    const stats = data.items[0].statistics;
+
+                    // Channel Name
+                    document.getElementById('videoChannelName').innerText = snippet.channelTitle || 'Unknown Channel';
+
+                    // Stats
+                    document.getElementById('videoViews').innerText = formatNumber(stats.viewCount || 0);
+                    document.getElementById('videoLikes').innerText = formatNumber(stats.likeCount || 0);
+                    document.getElementById('videoComments').innerText = formatNumber(stats.commentCount || 0);
+
+                    // Title & Description
                     document.getElementById('videoTitle').innerText = snippet.title;
-                    document.getElementById('videoDescription').innerText = snippet.description || 'কোনো ডেসক্রিপশন পাওয়া যায়নি।';
+                    document.getElementById('videoDesc').innerText = snippet.description || 'No description available.';
                     
-                    setupDynamicThumbnails(snippet.thumbnails);
-                    document.getElementById('resultArea').style.display = 'block';
+                    // Thumbnail
+                    const thumbUrl = snippet.thumbnails.maxres ? snippet.thumbnails.maxres.url : snippet.thumbnails.high.url;
+                    document.getElementById('videoThumb').src = thumbUrl;
+                    
+                    // Category
+                    const categoryName = categoryMap[snippet.categoryId] || 'General';
+                    document.getElementById('videoCategory').innerText = categoryName;
+
+                    // Tags
+                    const tagsArray = snippet.tags || [];
+                    document.getElementById('videoTags').innerText = tagsArray.length > 0 ? tagsArray.join(', ') : 'No tags found.';
+                    
+                    document.getElementById('videoView').style.display = 'block';
                 } else {
-                    alert('ভিডিওটি পাওয়া যায়নি!');
+                    alert('Video not found! Please check the link.');
                 }
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-                alert('ডেটা আনতে সমস্যা হয়েছে। API Key টি সক্রিয় আছে কিনা পরীক্ষা করুন।');
+            }).catch(err => {
+                console.error(err);
+                alert('Error fetching video data. Please try again.');
             });
-    }
-
-    function setupDynamicThumbnails(thumbnails) {
-        const qualityContainer = document.getElementById('qualityContainer');
-        qualityContainer.innerHTML = '';
-
-        const qualityTypes = [
-            { key: 'maxres', label: 'Max (4K/1080p)', icon: 'fa-star' },
-            { key: 'standard', label: 'Standard (SD)', icon: 'fa-image' },
-            { key: 'high', label: 'High (HQ)', icon: 'fa-image' },
-            { key: 'medium', label: 'Medium (MQ)', icon: 'fa-image' }
-        ];
-
-        let isFirst = true;
-
-        qualityTypes.forEach(type => {
-            if (thumbnails[type.key]) {
-                const url = thumbnails[type.key].url;
-                
-                if (isFirst) {
-                    selectedImageUrl = url;
-                }
-
-                const btn = document.createElement('div');
-                btn.className = `quality-btn ${isFirst ? 'active' : ''}`;
-                btn.innerHTML = `<i class="fas ${type.icon}"></i> ${type.label}`;
-                
-                btn.onclick = () => selectQuality(btn, url);
-                
-                qualityContainer.appendChild(btn);
-                isFirst = false;
-            }
-        });
-
-        document.getElementById('thumbnailPreview').src = selectedImageUrl;
-    }
-
-    function selectQuality(clickedBtn, url) {
-        document.querySelectorAll('.quality-btn').forEach(btn => btn.classList.remove('active'));
-        clickedBtn.classList.add('active');
-        
-        selectedImageUrl = url;
-        document.getElementById('thumbnailPreview').src = url;
-    }
-
-    // Blob দিয়ে মেমোরিতে ছবি ডিকোড করে সরাসরি ডাউনলোড করার ফাংশন
-    async function downloadImage() {
-        if (!selectedImageUrl) return;
-
-        const btn = document.getElementById('mainDownloadBtn');
-        const originalText = btn.innerHTML;
-        btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ডাউনলোড হচ্ছে...`;
-
-        try {
-            const response = await fetch(selectedImageUrl);
-            const blob = await response.blob();
-            const blobUrl = window.URL.createObjectURL(blob);
-            
-            const a = document.createElement('a');
-            a.style.display = 'none';
-            a.href = blobUrl;
-            a.download = `youtube-thumbnail-${Date.now()}.jpg`;
-            
-            document.body.appendChild(a);
-            a.click();
-            
-            window.URL.revokeObjectURL(blobUrl);
-            document.body.removeChild(a);
-        } catch (error) {
-            // অ্যান্ড্রয়েড অ্যাপ বা ব্রাউজারের সিকিউরিটি ব্লক করলে সরাসরি নিউ ট্যাবে ওপেন হবে
-            window.open(selectedImageUrl, '_blank');
-        } finally {
-            btn.innerHTML = originalText;
-        }
     }
 
     function extractVideoID(url) {
@@ -438,14 +443,103 @@
         return match ? match[1] : null;
     }
 
+    // --- Channel Functions ---
+    async function fetchChannelData(link) {
+        let handleMatch = link.match(/@([a-zA-Z0-9_.-]+)/);
+        let channelIdMatch = link.match(/channel\/([a-zA-Z0-9_-]+)/);
+        
+        try {
+            let channelId = '';
+            
+            if (handleMatch) {
+                const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=channel&q=${encodeURIComponent('@' + handleMatch[1])}&key=${API_KEY}`;
+                const searchRes = await fetch(searchUrl);
+                const searchData = await searchRes.json();
+                if (searchData.items && searchData.items.length > 0) {
+                    channelId = searchData.items[0].snippet.channelId;
+                }
+            } else if (channelIdMatch) {
+                channelId = channelIdMatch[1];
+            }
+
+            if (!channelId) {
+                alert('Channel not found!');
+                return;
+            }
+
+            const channelUrl = `https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics,brandingSettings&id=${channelId}&key=${API_KEY}`;
+            const res = await fetch(channelUrl);
+            const data = await res.json();
+
+            if (data.items && data.items.length > 0) {
+                const info = data.items[0];
+                
+                // Name & Meta Data
+                document.getElementById('channelName').innerText = info.snippet.title;
+                document.getElementById('channelSubs').innerText = formatNumber(info.statistics.subscriberCount);
+                document.getElementById('channelVideos').innerText = formatNumber(info.statistics.videoCount);
+                document.getElementById('channelCountry').innerText = info.snippet.country || 'N/A';
+                
+                // Logo & Banner
+                document.getElementById('channelLogo').src = info.snippet.thumbnails.high.url;
+                
+                const bannerCard = document.getElementById('bannerCard');
+                if (info.brandingSettings.image && info.brandingSettings.image.bannerExternalUrl) {
+                    document.getElementById('channelBanner').src = info.brandingSettings.image.bannerExternalUrl;
+                    bannerCard.style.display = 'block';
+                } else {
+                    bannerCard.style.display = 'none'; 
+                }
+
+                // Description & Date
+                document.getElementById('channelDesc').innerText = info.snippet.description || 'No description available.';
+                const date = new Date(info.snippet.publishedAt);
+                document.getElementById('channelDate').innerText = date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+                document.getElementById('channelView').style.display = 'block';
+            }
+        } catch (error) {
+            console.error(error);
+            alert('Error fetching channel data.');
+        }
+    }
+
+    function formatNumber(num) {
+        if (!num) return '0';
+        return Number(num).toLocaleString('en-US');
+    }
+
+    // --- Global Utilities ---
+    async function downloadImage(url, type) {
+        if (!url) return;
+        try {
+            const response = await fetch(url);
+            const blob = await response.blob();
+            const blobUrl = window.URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = blobUrl;
+            a.download = `YouTube-${type}-${Date.now()}.jpg`;
+            
+            document.body.appendChild(a);
+            a.click();
+            
+            window.URL.revokeObjectURL(blobUrl);
+            document.body.removeChild(a);
+        } catch (error) {
+            window.open(url, '_blank');
+        }
+    }
+
     function copyText(elementId, typeName) {
         const text = document.getElementById(elementId).innerText;
         if(!text) return;
-        
         navigator.clipboard.writeText(text).then(() => {
-            alert(`${typeName} কপি করা হয়েছে!`);
+            alert(`${typeName} copied to clipboard!`);
         }).catch(err => {
-            console.error('কপি করতে সমস্যা হয়েছে', err);
+            console.error(err);
+            alert('Failed to copy text.');
         });
     }
 </script>
